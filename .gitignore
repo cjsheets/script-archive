@@ -1,0 +1,8 @@
+# Ignore everything first:
+/*
+
+# Then un-ignore the following:
+!.gitignore
+!README.md
+!/backup/
+

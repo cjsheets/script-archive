@@ -1,0 +1,41 @@
+#!/bin/bash
+#* - - - - - - - - - - - - - - - - - -
+#* MD5Sum Check Script
+#* Updated: 2011.05.27
+#* Arguments: ~$ ./CheckMD5 /path/to/check
+#*
+
+blnFailStatus=0; rm -f /mnt/mountpoint/Music.md5/md5Failure.log
+while read -d $'\0' strInputFile
+do
+  strInputFile="$(readlink -f "$strInputFile")" # Convert to Absolute Path
+  strBackupFolder=${strInputFile/\/mnt\/mountpoint\/Music.FLAC/} 
+  strInputFileMD5="$(md5sum "$strInputFile")"
+  strCompare=${strInputFileMD5/mountpoint/LB.D01} 
+  if [ -f "/mnt/mountpoint/Music.md5$strBackupFolder" ]; then # If the MD5 exists, check, otherwise, create
+    if [ ! "$strCompare" == "$(cat "/mnt/mountpoint/Music.md5$strBackupFolder")" ]; then 
+      blnFailStatus=1
+      echo "$strCompare"  >>  /mnt/mountpoint/Music.md5/md5Failure.log
+      echo "$(cat "/mnt/mountpoint/Music.md5$strBackupFolder")"  >>  /mnt/mountpoint/Music.md5/md5Failure.log
+      echo ""  >>  /mnt/mountpoint/Music.md5/md5Failure.log
+      mv "/mnt/mountpoint/Music.md5$strBackupFolder" "/mnt/mountpoint/Music.md5$strBackupFolder.bak.$(date +%F-%H-%M)"
+      echo "$strCompare" > "/mnt/mountpoint/Music.md5$strBackupFolder"
+    else
+#      echo "$strCompare"
+#      echo "$strBackupFolder"
+      echo "$(cat "/mnt/mountpoint/Music.md5$strBackupFolder")" >> /mnt/mountpoint/Music.md5/md5Success.log      
+      echo "$strCompare"  >>  /mnt/mountpoint/Music.md5/md5Success.log
+      echo "$(cat "/mnt/mountpoint/Music.md5$strBackupFolder")" >> /mnt/mountpoint/Music.md5/md5Success.log
+    fi
+  elif [ -f "$strInputFile" ]; then
+    if [ ! -e "$(dirname "/mnt/mountpoint/Music.md5$strBackupFolder")" ]; then # If target is a file not folder
+      mkdir -p "$(dirname "/mnt/mountpoint/Music.md5$strBackupFolder")"
+    fi
+    echo "$strCompare" > "/mnt/mountpoint/Music.md5$strBackupFolder"
+  fi
+done < <( find "$1" -print0 ) 
+
+
+
+#*
+#* - - - - - - - - - - - - - - - - - -
