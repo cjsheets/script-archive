@@ -1,6 +1,6 @@
 # Script Archive
 
-This is an unmaintained archive of my old scripts. I keep them around for reference in case I need
+This is an unmaintained archive of my old scripts. I keep them around in case I need
 them for reference in the future.
 
 
