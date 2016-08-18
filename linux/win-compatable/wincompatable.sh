@@ -1,0 +1,1 @@
+find . -depth -mindepth 1 -print0 | while IFS="" read -r -d "" entry; do if [ -f "${entry}" ]; then b="$(basename "${entry}")"; n="$(echo "${b}" | tr -d '\001-\037/\\:*?"<>|')"; if [ "${b}" != "${n}" ]; then d="$(dirname "${entry}")"; [ -f "${d}/${b}" ] && mv "${entry}" "${d}/${n}"; fi; fi; done
